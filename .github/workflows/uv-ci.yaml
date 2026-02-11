@@ -1,10 +1,11 @@
 name: Build and Push UV App to GHCR
 
 on:
+  workflow_dispatch:
   push:
     branches: [ "main" ]
     paths:
-      - 'uv-in-action/**' # Only trigger if files in this sub-folder change
+      - 'uv-in-action/**'
 
 jobs:
   build-and-push:
@@ -28,7 +29,6 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          # This will name your image: ghcr.io/username/repo-name/uv-app
           images: ghcr.io/${{ github.repository }}/uv-app
           tags: |
             type=raw,value=latest
@@ -36,12 +36,10 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          # Point the context to the subdirectory
           context: ./uv-in-action
           file: ./uv-in-action/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          # Recommended: use GitHub Actions cache to speed up UV installs
           cache-from: type=gha
           cache-to: type=gha,mode=max
