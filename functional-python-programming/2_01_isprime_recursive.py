@@ -12,8 +12,7 @@ base case (factor found or limit reached) is satisfied.
 
 import sys
 
-# Increase recursion depth for larger prime checks
-sys.setrecursionlimit(2000)
+sys.setrecursionlimit(1000) # default
 
 def isprimer(n):
     """
