@@ -1,0 +1,17 @@
+# Xcode (do not track project files)
+*.xcodeproj
+*.xcworkspace
+DerivedData/
+build/
+xcuserdata/
+*.xcuserstate
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+env/
+
