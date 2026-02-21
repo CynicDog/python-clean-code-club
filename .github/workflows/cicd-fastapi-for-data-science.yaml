@@ -18,6 +18,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install UV
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Install dependencies
+        run: |
+          uv add ruff
+          uv add fastapi --extras standard
+          uv add "sqlalchemy[asyncio,mypy]"
+          uv add asyncpg
+          uv add --dev pytest-asyncio 
+          uv add --dev httpx 
+          uv add --dev aiosqlite
+
+      - name: Run ruff lint
+        run: |
+          uv run ruff check .
+
+      - name: Run tests with pytest
+        run: |
+          uv run pytest 
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
