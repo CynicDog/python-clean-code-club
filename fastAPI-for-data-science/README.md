@@ -1,25 +1,41 @@
-# FastAPI for Data Science 
+# FastAPI for Data Science
 
-### Create a project
+### Create the Project
 ```bash
 uv init --app
-```
+````
 
 ### Install Dependencies
-```
+
+```bash
 uv add ruff
 uv add fastapi --extras standard
-uv add "sqlalchemy[asyncio,mypy]"
+uv add "sqlalchemy[asyncio]"
 uv add asyncpg
+uv add --dev pytest-asyncio httpx aiosqlite
 ```
 
-### Run the FastAPI server 
+### Run the FastAPI Server
+
 ```bash
-uv run fastapi dev 
+uv run fastapi dev
 ```
 
-### Run Postgres Database
-```bash 
+### Run Tests
+
+```bash
+uv run pytest
+```
+
+### Run Linter
+
+```bash
+uv run ruff check .
+```
+
+### Run Postgres Database (Docker)
+
+```bash
 docker run -d --name fastapi-postgres \
   -e POSTGRES_USER=postgres \
   -e POSTGRES_PASSWORD=postgres \
@@ -27,11 +43,3 @@ docker run -d --name fastapi-postgres \
   -p 5432:5432 \
   postgres:16
 ```
-
-### Run MongoDB Database
-```bash 
-docker run -d --name fastapi-mongo \
-  -p 27017:27017 \
-  mongo:6.0
-```
-

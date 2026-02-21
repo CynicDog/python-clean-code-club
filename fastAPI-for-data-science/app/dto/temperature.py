@@ -1,6 +1,7 @@
 from enum import Enum
 from pydantic import BaseModel
 
+
 class Scale(str, Enum):
     CELSIUS = "C"
     FAHRENHEIT = "F"

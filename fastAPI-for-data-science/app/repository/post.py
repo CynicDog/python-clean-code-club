@@ -8,23 +8,16 @@ from ..models.post import Post
 from ..models.comment import Comment
 
 
-async def get_post_by_id(
-        session: AsyncSession,
-        id: int
-) -> Post | None:
+async def get_post_by_id(session: AsyncSession, id: int) -> Post | None:
     result = await session.execute(
-        select(Post)
-        .where(Post.id == id)
-        .options(selectinload(Post.comments))
+        select(Post).where(Post.id == id).options(selectinload(Post.comments))
     )
     return result.scalar_one_or_none()
 
 
 async def list_posts_all(session: AsyncSession) -> list[Post]:
     result = await session.execute(
-        select(Post)
-        .order_by(Post.id)
-        .options(selectinload(Post.comments))
+        select(Post).order_by(Post.id).options(selectinload(Post.comments))
     )
     return result.scalars().all()
 
@@ -35,10 +28,7 @@ async def list_posts_paginated(
     limit: int,
 ) -> list[Post]:
     result = await session.execute(
-        select(Post)
-        .order_by(Post.id)
-        .offset(skip)
-        .limit(limit)
+        select(Post).order_by(Post.id).offset(skip).limit(limit)
     )
     return result.scalars().all()
 
@@ -93,9 +83,7 @@ async def delete_post(
 
 
 async def create_comment(
-    session: AsyncSession,
-    comment_create: CommentCreate,
-    post_id: int
+    session: AsyncSession, comment_create: CommentCreate, post_id: int
 ) -> Comment:
     comment = Comment(**comment_create.model_dump(), post_id=post_id)
 

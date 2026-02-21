@@ -151,7 +151,9 @@ async def delete_post_route(
     return None
 
 
-@router.post("/{id}/comments", response_model=CommentRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/{id}/comments", response_model=CommentRead, status_code=status.HTTP_201_CREATED
+)
 async def create_post_comment_route(
     id: int,
     comment_create: CommentCreate,

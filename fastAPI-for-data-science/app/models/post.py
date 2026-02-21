@@ -7,6 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import Base
 from .comment import Comment
 
+
 class Post(Base):
     __tablename__ = "posts"
 

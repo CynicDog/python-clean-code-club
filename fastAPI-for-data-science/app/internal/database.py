@@ -14,8 +14,7 @@ from ..models.comment import Comment
 
 
 DATABASE_URL = os.environ.get(
-    "DATABASE_URL",
-    "postgresql+asyncpg://postgres:postgres@localhost:5432/fastapi_db"
+    "DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/fastapi_db"
 )
 
 engine = create_async_engine(
@@ -26,6 +25,7 @@ async_session_maker = async_sessionmaker(
     engine,
     expire_on_commit=False,
 )
+
 
 # A per-request resource manager implemented as a coroutine.
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
@@ -48,10 +48,7 @@ async def seed_posts() -> None:
         posts = [Post(title=f"Post {i}", content=f"Content {i}") for i in range(1, 6)]
 
         comments = [
-            Comment(
-                post=post,
-                content=f"Comment {j} for {post.title}"
-            )
+            Comment(post=post, content=f"Comment {j} for {post.title}")
             for post in posts
             for j in range(1, 3)
         ]

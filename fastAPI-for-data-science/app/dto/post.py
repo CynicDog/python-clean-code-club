@@ -6,12 +6,14 @@ from fastapi import Query
 
 from .comment import CommentRead
 
+
 class PostBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     title: str
     content: str
     publication_date: datetime = Field(default_factory=datetime.now)
+
 
 class PostCreate(PostBase):
     pass
@@ -34,8 +36,8 @@ class PostPagination:
         self.maximum_limit = maximum_limit
 
     async def __call__(
-            self,
-            skip: int = Query(0, ge=0),
-            limit: int = Query(10, ge=0),
+        self,
+        skip: int = Query(0, ge=0),
+        limit: int = Query(10, ge=0),
     ) -> tuple[int, int]:
         return skip, min(self.maximum_limit, limit)
