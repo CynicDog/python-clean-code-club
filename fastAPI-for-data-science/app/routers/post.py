@@ -4,17 +4,20 @@ from collections.abc import Sequence
 from fastapi import Depends, APIRouter, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..dto.post import PostRead, PostCreate, PostUpdate, PostPagination
-from ..models.post import Post
-from ..repository.post import (
-    get_by_id,
-    list_all,
-    list_paginated,
-    create,
-    update,
-    delete,
-)
 from ..internal.database import get_async_session
+from ..dto.post import PostRead, PostCreate, PostUpdate, PostPagination
+from ..dto.comment import CommentRead, CommentCreate
+from ..models.post import Post
+from ..models.comment import Comment
+from ..repository.post import (
+    get_post_by_id,
+    list_posts_all,
+    list_posts_paginated,
+    create_post,
+    update_post,
+    delete_post,
+    create_comment,
+)
 
 router = APIRouter(prefix="/posts", tags=["post"])
 post_pagination = PostPagination(maximum_limit=50)
@@ -33,7 +36,7 @@ async def read_all_posts_route(
     :param session: The session object injected by the dependency
     :return: A list of Post model
     """
-    return await list_all(session)
+    return await list_posts_all(session)
 
 
 @router.get("/", response_model=List[PostRead])
@@ -53,11 +56,11 @@ async def read_posts_paginated_route(
     :return: A paginated list of Post model
     """
     skip, limit = pagination
-    return await list_paginated(session, skip, limit)
+    return await list_posts_paginated(session, skip, limit)
 
 
 @router.post("/", response_model=PostRead, status_code=status.HTTP_201_CREATED)
-async def create_route(
+async def create_post_route(
     post_create: PostCreate,
     session: AsyncSession = Depends(get_async_session),
 ) -> Post:
@@ -73,11 +76,11 @@ async def create_route(
 
     :return: A newly created Post model
     """
-    return await create(session, post_create)
+    return await create_post(session, post_create)
 
 
 @router.get("/{id}", response_model=PostRead)
-async def read_post(
+async def read__post_route(
     id: int,
     session: AsyncSession = Depends(get_async_session),
 ) -> Post:
@@ -92,7 +95,7 @@ async def read_post(
 
     :return: A single Post model
     """
-    post = await get_by_id(session, id)
+    post = await get_post_by_id(session, id)
 
     if post is None:
         raise HTTPException(status_code=404, detail="Post not found")
@@ -101,7 +104,7 @@ async def read_post(
 
 
 @router.put("/{id}", response_model=PostRead)
-async def update_route(
+async def update_post_route(
     id: int,
     post_update: PostUpdate,
     session: AsyncSession = Depends(get_async_session),
@@ -118,7 +121,7 @@ async def update_route(
 
     :return: Updated Post model
     """
-    post = await update(session, id, post_update)
+    post = await update_post(session, id, post_update)
 
     if post is None:
         raise HTTPException(status_code=404, detail="Post not found")
@@ -127,7 +130,7 @@ async def update_route(
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_route(
+async def delete_post_route(
     id: int,
     session: AsyncSession = Depends(get_async_session),
 ) -> None:
@@ -140,9 +143,28 @@ async def delete_route(
     :param id: The post id passed by request
     :param session: The session object injected by dependency
     """
-    deleted = await delete(session, id)
+    deleted = await delete_post(session, id)
 
     if not deleted:
         raise HTTPException(status_code=404, detail="Post not found")
 
     return None
+
+
+@router.post("/{id}/comments", response_model=CommentRead, status_code=status.HTTP_201_CREATED)
+async def create_post_comment_route(
+    id: int,
+    comment_create: CommentCreate,
+    session: AsyncSession = Depends(get_async_session),
+) -> Comment:
+    """
+    Create a new comment.
+
+    Example:
+        echo '{"content": "This is a comment"}' \
+        | http POST :8000/posts/1/comments --json
+
+    :param comment_create: The comment object received in request body
+    :param session: The session object injected by the dependency
+    """
+    return await create_comment(session, comment_create, post_id=id)
