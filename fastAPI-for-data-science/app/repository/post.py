@@ -1,6 +1,5 @@
-# repository/post.py
-
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..dto.post import PostCreate, PostUpdate
@@ -12,14 +11,18 @@ async def get_by_id(
         id: int
 ) -> Post | None:
     result = await session.execute(
-        select(Post).where(Post.id == id)
+        select(Post)
+        .where(Post.id == id)
+        .options(selectinload(Post.comments))
     )
     return result.scalar_one_or_none()
 
 
 async def list_all(session: AsyncSession) -> list[Post]:
     result = await session.execute(
-        select(Post).order_by(Post.id)
+        select(Post)
+        .order_by(Post.id)
+        .options(selectinload(Post.comments))
     )
     return result.scalars().all()
 

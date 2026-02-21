@@ -1,3 +1,4 @@
+from typing import List
 from collections.abc import Sequence
 
 from fastapi import Depends, APIRouter, status, HTTPException
@@ -19,7 +20,7 @@ router = APIRouter(prefix="/posts", tags=["post"])
 post_pagination = PostPagination(maximum_limit=50)
 
 
-@router.get("/all", response_model=list[PostRead])
+@router.get("/all", response_model=List[PostRead])
 async def read_all_posts_route(
     session: AsyncSession = Depends(get_async_session),
 ) -> Sequence[Post]:
@@ -35,7 +36,7 @@ async def read_all_posts_route(
     return await list_all(session)
 
 
-@router.get("/", response_model=list[PostRead])
+@router.get("/", response_model=List[PostRead])
 async def read_posts_paginated_route(
     pagination: tuple[int, int] = Depends(post_pagination),
     session: AsyncSession = Depends(get_async_session),
