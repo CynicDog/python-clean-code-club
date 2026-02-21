@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           uv add ruff
-          uv add fastapi --extras standard
+          uv add fastapi --extra standard
           uv add "sqlalchemy[asyncio,mypy]"
           uv add asyncpg
           uv add --dev pytest-asyncio 
