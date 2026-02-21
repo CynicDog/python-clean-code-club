@@ -4,7 +4,7 @@ from .routers import temparature, http, post
 from .internal.database import create_all_tables, seed_posts
 from fastapi import FastAPI
 
-
+# Application-scope lifecycle implemented as a coroutine
 @contextlib.asynccontextmanager
 async def lifespan(app: FastAPI):
     await create_all_tables()
