@@ -1,8 +1,11 @@
-from .base import Base
+from typing import List
 from datetime import datetime
-from sqlalchemy import DateTime, Integer, String, Text
-from sqlalchemy.orm import Mapped, mapped_column
 
+from sqlalchemy import DateTime, Integer, String, Text
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from .base import Base
+from .comment import Comment
 
 class Post(Base):
     __tablename__ = "posts"
@@ -25,3 +28,5 @@ class Post(Base):
         Text,
         nullable=False,
     )
+
+    comments: Mapped[List[Comment]] = relationship("Comment", cascade="all, delete")

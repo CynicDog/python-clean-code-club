@@ -10,6 +10,7 @@ from sqlalchemy import select
 
 from ..models.base import Base
 from ..models.post import Post
+from ..models.comment import Comment
 
 
 DATABASE_URL = os.environ.get(
@@ -41,13 +42,21 @@ async def seed_posts() -> None:
     async with async_session_maker() as session:
         result = await session.execute(select(Post))
         existing = result.scalars().first()
-
         if existing:
             return
 
-        posts = [
-            Post(title=f"Post {i}", content=f"Content {i}") for i in range(1, 6)
+        posts = [Post(title=f"Post {i}", content=f"Content {i}") for i in range(1, 6)]
+
+        comments = [
+            Comment(
+                post=post,
+                content=f"Comment {j} for {post.title}"
+            )
+            for post in posts
+            for j in range(1, 3)
         ]
 
         session.add_all(posts)
+        session.add_all(comments)
+
         await session.commit()

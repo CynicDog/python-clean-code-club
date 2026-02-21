@@ -1,16 +1,17 @@
+from typing import List
 from datetime import datetime
-from pydantic import BaseModel, Field
+
+from pydantic import BaseModel, ConfigDict, Field
 from fastapi import Query
 
+from .comment import CommentRead
 
 class PostBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     title: str
     content: str
     publication_date: datetime = Field(default_factory=datetime.now)
-
-    class Config:
-        orm_mode = True
-
 
 class PostCreate(PostBase):
     pass
@@ -19,6 +20,8 @@ class PostCreate(PostBase):
 class PostRead(PostBase):
     id: int
     views: int = 0
+
+    comments: List[CommentRead] = []
 
 
 class PostUpdate(PostBase):
