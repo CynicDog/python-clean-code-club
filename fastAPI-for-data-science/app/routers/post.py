@@ -1,38 +1,147 @@
-from fastapi import Depends, APIRouter
+from collections.abc import Sequence
 
-from typing import List
-from ..models.post import Post, PostPagination
-from ..dependencies import get_post_or_404
-from ..internal.database import mock_db
+from fastapi import Depends, APIRouter, status, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from ..dto.post import PostRead, PostCreate, PostUpdate, PostPagination
+from ..models.post import Post
+from ..repository.post import (
+    get_by_id,
+    list_all,
+    list_paginated,
+    create,
+    update,
+    delete,
+)
+from ..internal.database import get_async_session
 
 router = APIRouter(prefix="/posts", tags=["post"])
 post_pagination = PostPagination(maximum_limit=50)
 
 
-@router.get("/{id}", response_model=Post)
-async def get(post: Post = Depends(get_post_or_404)):
+@router.get("/all", response_model=list[PostRead])
+async def read_all_posts_route(
+    session: AsyncSession = Depends(get_async_session),
+) -> Sequence[Post]:
+    """
+    Get all posts.
+
+    Example:
+        http ":8000/posts/all"
+
+    :param session: The session object injected by the dependency
+    :return: A list of Post model
+    """
+    return await list_all(session)
+
+
+@router.get("/", response_model=list[PostRead])
+async def read_posts_paginated_route(
+    pagination: tuple[int, int] = Depends(post_pagination),
+    session: AsyncSession = Depends(get_async_session),
+) -> Sequence[Post]:
+    """
+    Get all posts paginated.
+
+    Example:
+        http ":8000/posts/?limit=10&offset=0"
+
+    :param pagination: A tuple containing skip and limit values
+    :param session: The session object injected by the dependency
+
+    :return: A paginated list of Post model
+    """
+    skip, limit = pagination
+    return await list_paginated(session, skip, limit)
+
+
+@router.post("/", response_model=PostRead, status_code=status.HTTP_201_CREATED)
+async def create_route(
+    post_create: PostCreate,
+    session: AsyncSession = Depends(get_async_session),
+) -> Post:
+    """
+    Create a new post.
+
+    Example:
+        echo '{"title": "Hello FastAPI", "content": "My first post"}' \
+        | http POST :8000/posts/ --json
+
+    :param post_create: The post object received in request body
+    :param session: The session object injected by the dependency
+
+    :return: A newly created Post model
+    """
+    return await create(session, post_create)
+
+
+@router.get("/{id}", response_model=PostRead)
+async def read_post(
+    id: int,
+    session: AsyncSession = Depends(get_async_session),
+) -> Post:
     """
     Get a single post.
 
     Example:
         http ":8000/posts/1"
 
-    :param post: The post object injected by the dependency
+    :param id: The post id passed by request
+    :param session: The session object injected by the dependency
+
     :return: A single Post model
     """
+    post = await get_by_id(session, id)
+
+    if post is None:
+        raise HTTPException(status_code=404, detail="Post not found")
+
     return post
 
 
-@router.get("/", response_model=List[Post])
-async def get_posts_paginated(p: tuple[int, int] = Depends(post_pagination)):
+@router.put("/{id}", response_model=PostRead)
+async def update_route(
+    id: int,
+    post_update: PostUpdate,
+    session: AsyncSession = Depends(get_async_session),
+) -> Post:
     """
-    Get a list of posts.
+    Update a post.
 
     Example:
-        http ":8000/posts/?skip=0&limit=20"
+        http PUT :8000/posts/1 title="Updated" content="New content"
 
-    :param p: A tuple containing (skip, limit)
-    :return: A list of Post models
+    :param id: The post id passed by request
+    :param post_update: Updated post data
+    :param session: The session object injected by dependency
+
+    :return: Updated Post model
     """
-    skip, limit = p
-    return list(mock_db.values())[skip : skip+limit]
+    post = await update(session, id, post_update)
+
+    if post is None:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    return post
+
+
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_route(
+    id: int,
+    session: AsyncSession = Depends(get_async_session),
+) -> None:
+    """
+    Delete a post.
+
+    Example:
+        http DELETE :8000/posts/1
+
+    :param id: The post id passed by request
+    :param session: The session object injected by dependency
+    """
+    deleted = await delete(session, id)
+
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    return None

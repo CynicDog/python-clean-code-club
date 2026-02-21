@@ -1,22 +1,27 @@
-from pydantic import BaseModel
-from fastapi import Query
+from .base import Base
+from datetime import datetime
+from sqlalchemy import DateTime, Integer, String, Text
+from sqlalchemy.orm import Mapped, mapped_column
 
 
-class PostBase(BaseModel):
-    title: str
-    content: str
+class Post(Base):
+    __tablename__ = "posts"
 
-class Post(PostBase):
-    id: int
-    views: int = 0
-
-class PostPagination:
-    def __init__(self, maximum_limit: int = 100):
-        self.maximum_limit = maximum_limit
-
-    async def __call__(
-            self,
-            skip: int = Query(0, ge=0),
-            limit: int = Query(10, ge=0),
-    ) -> tuple[int, int]:
-        return skip, min(self.maximum_limit, limit)
+    id: Mapped[int] = mapped_column(
+        Integer,
+        primary_key=True,
+        autoincrement=True,
+    )
+    publication_date: Mapped[datetime] = mapped_column(
+        DateTime,
+        nullable=False,
+        default=datetime.now,
+    )
+    title: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
+    )
+    content: Mapped[str] = mapped_column(
+        Text,
+        nullable=False,
+    )

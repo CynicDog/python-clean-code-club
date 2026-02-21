@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from ..models.temperature import Temperature
+from ..dto.temperature import Temperature
 
 
 router = APIRouter(prefix="/temperature", tags=["temperature"])

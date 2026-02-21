@@ -1,30 +1,20 @@
-from fastapi import Depends, FastAPI
-from .dependencies import get_query_token, get_token_header
-from .internal import admin
-from .routers import items, users, temparature, http, post
+import contextlib
+
+from .routers import temparature, http, post
+from .internal.database import create_all_tables, seed_posts
+from fastapi import FastAPI
 
 
-app = FastAPI()
+@contextlib.asynccontextmanager
+async def lifespan(app: FastAPI):
+    await create_all_tables()
+    await seed_posts()
 
-app.include_router(
-    users.router,
-    dependencies=[Depends(get_query_token)]
-)
-app.include_router(
-    items.router,
-    dependencies=[Depends(get_query_token)]
-)
-app.include_router(
-    admin.router,
-    prefix="/admin",
-    tags=["admin"],
-    dependencies=[Depends(get_token_header)],
-    responses={418: {"description": "I'm a teapot"}},
-)
+    yield
+
+app = FastAPI(lifespan=lifespan)
+
 app.include_router(temparature.router)
-
 app.include_router(http.router)
 
-app.include_router(
-    post.router,
-)
+app.include_router(post.router)

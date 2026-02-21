@@ -6,6 +6,7 @@ class Scale(str, Enum):
     FAHRENHEIT = "F"
     KELVIN = "K"
 
+
 class Temperature(BaseModel):
     value: float
     scale: str
