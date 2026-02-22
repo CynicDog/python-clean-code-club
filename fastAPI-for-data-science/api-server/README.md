@@ -1,4 +1,4 @@
-# FastAPI for Data Science
+# FastAPI for Data Science: API Server
 
 ### Create the Project
 ```bash
@@ -9,7 +9,7 @@ uv init --app
 
 ```bash
 uv add ruff
-uv add fastapi --extras standard
+uv add fastapi --extra standard
 uv add "sqlalchemy[asyncio]"
 uv add asyncpg
 uv add --dev pytest-asyncio httpx aiosqlite

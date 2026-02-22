@@ -5,7 +5,7 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'fastAPI-for-data-science/basic-backend/**'
+      - 'fastAPI-for-data-science/api-server/**'
 
 jobs:
   build-and-push:
@@ -16,7 +16,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./fastAPI-for-data-science/basic-backend
+        working-directory: ./fastAPI-for-data-science/api-server
 
     steps:
       - name: Checkout repository
@@ -60,13 +60,13 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}/fastapi-for-data-science
           tags: |
-            type=raw,value=basic-backend
+            type=raw,value=api-server
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./fastAPI-for-data-science/basic-backend
-          file: ./fastAPI-for-data-science/basic-backend/Dockerfile
+          context: ./fastAPI-for-data-science/api-server
+          file: ./fastAPI-for-data-science/api-server/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
