@@ -16,7 +16,8 @@ uv add --dev pytest-asyncio
 ### Run the FastAPI Server
 
 ```bash
-uv run fastapi dev
+uv run uvicorn app.main:app --reload
+uv run python -m http.server --directory app 9000
 ```
 
 ### Run Tests
