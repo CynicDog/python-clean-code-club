@@ -4,7 +4,7 @@ FROM python:3.11-slim-bullseye
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
 # Copy the application into the container.
-COPY . /app
+COPY .. /app
 
 # Install the application dependencies.
 WORKDIR /app
