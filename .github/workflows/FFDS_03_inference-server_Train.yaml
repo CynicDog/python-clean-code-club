@@ -1,0 +1,38 @@
+name: Train Classification Machine Learning over Iris Data for Iris Inference App
+
+on:
+  workflow_dispatch: # Manual trigger
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'fastAPI-for-data-science/03_inference-server/scripts/train.py'
+      - 'fastAPI-for-data-science/03_inference-server/data/**'
+
+jobs:
+  train-model:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./fastAPI-for-data-science/03_inference-server
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install UV
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Run training script
+        run: |
+          mkdir -p models
+          uv run scripts/train.py
+
+      - name: Upload Model Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: iris-model-artifact
+          path: ./fastAPI-for-data-science/03_inference-server/models/iris_model_latest.pkl
+          retention-days: 14

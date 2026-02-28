@@ -1,0 +1,70 @@
+name: FFDS_03_inference-server_CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'fastAPI-for-data-science/03_inference-server/app/**'
+      - 'fastAPI-for-data-science/03_inference-server/Dockerfile'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    defaults:
+      run:
+        working-directory: ./fastAPI-for-data-science/03_inference-server
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install UV
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Download model artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: iris-model-artifact
+          path: ./fastAPI-for-data-science/03_inference-server/models/
+
+      - name: Run ruff lint
+        run: uv run ruff check .
+
+      - name: Run tests with pytest
+        run: uv run pytest
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}/iris-inference
+          tags: type=raw,value=latest
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./fastAPI-for-data-science/03_inference-server
+          file: ./fastAPI-for-data-science/03_inference-server/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

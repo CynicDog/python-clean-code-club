@@ -1,4 +1,4 @@
-name: Build and Push UV App to GHCR
+name: Build and Push FastAPI App to GHCR
 
 on:
   workflow_dispatch:
