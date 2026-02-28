@@ -74,6 +74,7 @@ jobs:
           context: ./fastAPI-for-data-science/03_inference-server
           file: ./fastAPI-for-data-science/03_inference-server/Dockerfile
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
