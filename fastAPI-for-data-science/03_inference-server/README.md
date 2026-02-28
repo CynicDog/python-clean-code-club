@@ -19,6 +19,11 @@ uv add --dev pytest-asyncio httpx
 uv run fastapi dev
 ```
 
+### Train the model 
+```bash 
+uv run scripts/train.py 
+```
+
 ### Run Tests
 
 ```bash

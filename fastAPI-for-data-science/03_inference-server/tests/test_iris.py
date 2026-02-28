@@ -27,9 +27,7 @@ def test_prediction_success(client):
     """
     Test a valid prediction request.
     """
-    payload = {
-        "features": [5.1, 3.5, 1.4, 0.2]
-    }
+    payload = {"features": [5.1, 3.5, 1.4, 0.2]}
     response = client.post("/iris/predict", json=payload)
 
     assert response.status_code == 200
