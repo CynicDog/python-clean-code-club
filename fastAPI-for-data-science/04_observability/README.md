@@ -62,4 +62,5 @@ uv run scripts/simulate_requests.py
 ```
 
 ### Grafana Dashboard 
+<img width="1955" height="2115" alt="Screenshot 2026-02-28 at 8 46 30 PM" src="https://github.com/user-attachments/assets/b3844923-005a-4558-b666-d36fd6bb9b74" />
 
