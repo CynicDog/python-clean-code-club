@@ -1,4 +1,4 @@
-name: Train Classification Machine Learning over Iris Data for Iris Inference App
+name: FFDS_03_inference-server_Train
 
 on:
   workflow_dispatch: # Manual trigger

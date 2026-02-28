@@ -1,4 +1,4 @@
-name: Build and Push FastAPI App to GHCR
+name: FFDS_01_api-server_CI
 
 on:
   workflow_dispatch:
