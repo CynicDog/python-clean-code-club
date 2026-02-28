@@ -1,73 +1,51 @@
 import pytest
 from fastapi.testclient import TestClient
-
 from app.main import app
-from app.router.iris import get_prediction_service
-
-from app.dto.iris import (
-    IrisPredictResponse,
-    PredictionResult,
-    IrisFeatures,
-)
-
-
-class DummyPredictionService:
-    def __init__(self, model=None):
-        self.model = model
-
-    def predict(self, request):
-        return IrisPredictResponse(
-            predict=PredictionResult(
-                species="setosa",
-                probability=0.99,
-            ),
-            feed=[
-                IrisFeatures(
-                    sepal_length=request.features[0],
-                    sepal_width=request.features[1],
-                    petal_length=request.features[2],
-                    petal_width=request.features[3],
-                )
-            ],
-            model_version="rf_v1",
-        )
 
 
 @pytest.fixture
 def client():
-    app.dependency_overrides[get_prediction_service] = lambda: DummyPredictionService()
+    """
+    Fixture that provides a TestClient with the lifespan context.
+    """
+    with TestClient(app) as c:
+        yield c
 
-    with TestClient(app) as client:
-        yield client
 
-    app.dependency_overrides = {}
-
-
-def test_health_endpoint(client):
+def test_health_check(client):
+    """
+    Test the /health endpoint to ensure the model is loaded in state.
+    """
     response = client.get("/health")
     assert response.status_code == 200
-    assert response.json()["status"] in ["healthy", "unhealthy"]
-    assert "model_loaded" in response.json()
+    data = response.json()
+    assert data["status"] == "healthy"
+    assert data["model_loaded"] is True
 
 
-def test_predict_success(client):
-    payload = {"features": [5.1, 3.5, 1.4, 0.2]}
-
+def test_prediction_success(client):
+    """
+    Test a valid prediction request.
+    """
+    payload = {
+        "features": [5.1, 3.5, 1.4, 0.2]
+    }
     response = client.post("/iris/predict", json=payload)
 
     assert response.status_code == 200
     data = response.json()
 
+    assert "predict" in data
     assert data["predict"]["species"] == "setosa"
-    assert data["predict"]["probability"] == 0.99
-    assert data["model_version"] == "rf_v1"
+    assert "model_version" in data
     assert "timestamp" in data
-    assert len(data["feed"]) == 1
 
 
-def test_predict_invalid_input(client):
-    payload = {"features": [5.1, 3.5]}
-
+def test_prediction_invalid_data(client):
+    """
+    Test that the API returns 422 Unprocessable Entity for bad input.
+    """
+    payload = {"features": "not a list"}
     response = client.post("/iris/predict", json=payload)
 
     assert response.status_code == 422
