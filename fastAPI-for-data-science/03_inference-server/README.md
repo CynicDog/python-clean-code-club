@@ -10,9 +10,7 @@ uv init --app
 ```bash
 uv add ruff
 uv add fastapi --extra standard
-#uv add "sqlalchemy[asyncio]"
-#uv add asyncpg
-uv add --dev pytest-asyncio # httpx aiosqlite
+uv add --dev pytest-asyncio httpx
 ```
 
 ### Run the FastAPI Server
@@ -33,13 +31,25 @@ uv run pytest
 uv run ruff check .
 ```
 
-### Run Postgres Database (Docker)
+## Run as Container
+
+### Pull Image
 
 ```bash
-docker run -d --name fastapi-postgres \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_PASSWORD=postgres \
-  -e POSTGRES_DB=fastapi_db \
-  -p 5432:5432 \
-  postgres:16
+docker pull ghcr.io/cynicdog/python-clean-code-club/iris-inference:latest
+
+```
+
+### Run Container
+
+```bash
+docker run -d -p 8000:80 --name iris-app ghcr.io/cynicdog/python-clean-code-club/iris-inference:latest
+
+```
+
+### Make Request
+
+```bash
+http POST :8000/iris/predict features:='[5.1, 3.5, 1.4, 0.2]'
+
 ```
