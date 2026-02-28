@@ -44,48 +44,22 @@ uv run ruff check .
 
 ## Run as Container
 
-### Pull Image
+```bash 
+docker compose up 
+``` 
 
-```bash
-docker pull ghcr.io/cynicdog/python-clean-code-club/iris-inference:latest
+### Setup Grafana
 
+- Login to http://localhost:3000 (admin/admin)
+- Go to Connections > Data Sources
+- Click Add data source > Prometheus
+- For the URL, enter: http://prometheus:9090
+- Click Save & Test.
+
+### Simulate requests 
+```
+uv run scripts/simulate_requests.py
 ```
 
-### Run Container
+### Grafana Dashboard 
 
-```bash
-docker run -d -p 8000:80 --name iris-app ghcr.io/cynicdog/python-clean-code-club/iris-inference:latest
-
-```
-
-### Make Request
-
-```bash
-http POST :8000/iris/predict features:='[5.1, 3.5, 1.4, 0.2]'
-
-```
-
-### Run the Jaeger container 
-```
-docker run --rm -d --name jaeger \
-  -p 16686:16686 \
-  -p 4317:4317 \
-  jaegertracing/all-in-one:latest
-```
-> - `16686`: The Web UI 
-> - `4317` : The OTLP gRPC receiver
-
-
-```
-docker run -d --name prometheus \
-  -p 9090:9090 \
-  -v $(pwd)/prometheus.yml:/etc/prometheus/prometheus.yml \
-  prom/prometheus
-```
-
-```
-docker run -d --name grafana \
-  -p 3000:3000 \
-  -e "GF_SECURITY_ADMIN_PASSWORD=admin" \
-  grafana/grafana
-```

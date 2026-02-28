@@ -1,6 +1,6 @@
 services:
   app:
-    image: ghcr.io/cynicdog/python-clean-code-club/iris-inference:latest
+    image: ghcr.io/cynicdog/python-clean-code-club/iris-inference-observability:latest
     ports:
       - "8000:80"
       - "9464:9464"
