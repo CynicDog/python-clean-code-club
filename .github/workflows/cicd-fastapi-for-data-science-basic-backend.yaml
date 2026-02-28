@@ -5,7 +5,7 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'fastAPI-for-data-science/api-server/**'
+      - 'fastAPI-for-data-science/01_api-server/**'
 
 jobs:
   build-and-push:
@@ -16,7 +16,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./fastAPI-for-data-science/api-server
+        working-directory: ./fastAPI-for-data-science/01_api-server
 
     steps:
       - name: Checkout repository
@@ -65,8 +65,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./fastAPI-for-data-science/api-server
-          file: ./fastAPI-for-data-science/api-server/Dockerfile
+          context: ./fastAPI-for-data-science/01_api-server
+          file: ./fastAPI-for-data-science/01_api-server/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
