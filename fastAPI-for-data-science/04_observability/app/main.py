@@ -12,7 +12,6 @@ from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 
 from opentelemetry import metrics
 from opentelemetry.sdk.metrics import MeterProvider
-from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from opentelemetry.exporter.prometheus import PrometheusMetricReader
 from prometheus_client import start_http_server
 
@@ -37,17 +36,20 @@ metrics.set_meter_provider(meter_provider)
 
 start_http_server(port=9464)
 
+
 @contextlib.asynccontextmanager
 async def lifespan(app: FastAPI):
     repository = ModelRepository()
     app.state.model = repository.load_latest_model()
     yield
 
+
 app = FastAPI(title="Iris Inference API", lifespan=lifespan)
 
 app.include_router(iris.router)
 
 FastAPIInstrumentor.instrument_app(app)
+
 
 @app.get("/health")
 def health_check(request: Request):

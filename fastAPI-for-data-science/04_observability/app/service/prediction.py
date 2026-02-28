@@ -16,13 +16,12 @@ meter = metrics.get_meter(__name__)
 prediction_counter = meter.create_counter(
     "iris_predictions_total",
     unit="1",
-    description="Number of iris predictions made, labeled by species"
+    description="Number of iris predictions made, labeled by species",
 )
 feature_histogram = meter.create_histogram(
-    "iris_feature_values",
-    unit="cm",
-    description="Distribution of input feature values"
+    "iris_feature_values", unit="cm", description="Distribution of input feature values"
 )
+
 
 class PredictionService:
     def __init__(self, model: rt.InferenceSession):
@@ -60,7 +59,9 @@ class PredictionService:
             idx, prob = self._get_cached_onnx_run(features_tuple)
             species_name = self.target_names[idx]
 
-            prediction_counter.add(1, {"species": species_name, "model_version": "onnx_v1"})
+            prediction_counter.add(
+                1, {"species": species_name, "model_version": "onnx_v1"}
+            )
 
             span.set_attribute("iris.features_count", len(features_tuple))
 
