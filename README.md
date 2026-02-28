@@ -4,6 +4,8 @@
 
 ### Concept  
 - [Python Enhancement Proposals](https://peps.python.org/)
+- [Machine Learning System Pattern](https://github.com/mercari/ml-system-design-pattern)
+- [Machine Learning System in Actions](https://github.com/shibuiwilliam/ml-system-in-actions)
 
 ### Management 
 - [uv](https://docs.astral.sh/uv/) 
