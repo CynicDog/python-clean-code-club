@@ -1,0 +1,81 @@
+name: FFDS_04_observability_CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'fastAPI-for-data-science/04_observability/app/**'
+      - 'fastAPI-for-data-science/04_observability/Dockerfile'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    defaults:
+      run:
+        working-directory: ./fastAPI-for-data-science/04_observability
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install UV
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Get Latest Train Run ID
+        id: get-run-id
+        run: |
+          RUN_ID=$(gh run list --workflow "FFDS_03_inference-server_Train" --status success --limit 1 --json databaseId --jq '.[0].databaseId')
+          echo "latest_run_id=$RUN_ID" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download model artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: iris-model-artifact
+          path: ./fastAPI-for-data-science/04_observability/models/
+          run-id: ${{ steps.get-run-id.outputs.latest_run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run ruff lint
+        run: uv run ruff check .
+
+      - name: Run tests with pytest
+        run: uv run pytest
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}/iris-inference
+          tags: type=raw,value=latest
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./fastAPI-for-data-science/04_observability
+          file: ./fastAPI-for-data-science/04_observability/Dockerfile
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

@@ -14,7 +14,9 @@ uv add --dev pytest-asyncio httpx
 uv add opentelemetry-api \
        opentelemetry-sdk \
        opentelemetry-instrumentation-fastapi \
-       opentelemetry-exporter-otlp
+       opentelemetry-exporter-otlp \
+       opentelemetry-exporter-prometheus \
+       prometheus-client       
 ```
 
 ### Run the FastAPI Server
@@ -72,3 +74,18 @@ docker run --rm -d --name jaeger \
 ```
 > - `16686`: The Web UI 
 > - `4317` : The OTLP gRPC receiver
+
+
+```
+docker run -d --name prometheus \
+  -p 9090:9090 \
+  -v $(pwd)/prometheus.yml:/etc/prometheus/prometheus.yml \
+  prom/prometheus
+```
+
+```
+docker run -d --name grafana \
+  -p 3000:3000 \
+  -e "GF_SECURITY_ADMIN_PASSWORD=admin" \
+  grafana/grafana
+```

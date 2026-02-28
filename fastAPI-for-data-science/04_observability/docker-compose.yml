@@ -1,0 +1,40 @@
+services:
+  app:
+    image: ghcr.io/cynicdog/python-clean-code-club/iris-inference:latest
+    ports:
+      - "8000:80"
+      - "9464:9464"
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_SERVICE_NAME=iris-inference-service
+    networks:
+      - ml-observability
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+    networks:
+      - ml-observability
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - ml-observability
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - ml-observability
+
+networks:
+  ml-observability:
