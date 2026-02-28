@@ -65,7 +65,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository }}/iris-inference
+          images: ghcr.io/${{ github.repository }}/iris-inference-observability
           tags: type=raw,value=latest
 
       - name: Build and push Docker image
