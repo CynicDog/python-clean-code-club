@@ -1,7 +1,7 @@
 from functools import lru_cache
 import numpy as np
 import onnxruntime as rt
-from opentelemetry import trace, metrics  # <--- Added metrics
+from opentelemetry import trace, metrics 
 
 from ..dto.iris import (
     IrisPredictRequest,
