@@ -10,14 +10,12 @@
 ### Management 
 - [uv](https://docs.astral.sh/uv/) 
 
+### System 
+- [The Definitive Guide to Celery and Flask](https://testdriven.io/courses/flask-celery/)
+
 ### Application 
 - [fastAPI](https://github.com/fastapi/fastapi)
 - [pydantic](https://github.com/pydantic/pydantic)
 
 ### Database  
 - [psycopg](https://github.com/psycopg/psycopg)
-
-### System 
-- [The Definitive Guide to Celery and Flask](https://testdriven.io/courses/flask-celery/)
-
-- 
