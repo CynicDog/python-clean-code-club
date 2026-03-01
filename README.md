@@ -15,4 +15,9 @@
 - [pydantic](https://github.com/pydantic/pydantic)
 
 ### Database  
-- [psycopg](https://github.com/psycopg/psycopg) 
+- [psycopg](https://github.com/psycopg/psycopg)
+
+### System 
+- [The Definitive Guide to Celery and Flask](https://testdriven.io/courses/flask-celery/)
+
+- 
