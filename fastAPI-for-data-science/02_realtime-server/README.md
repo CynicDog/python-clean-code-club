@@ -9,7 +9,7 @@ uv init --app
 
 ```bash
 uv add ruff
-uv add fastapi --extras standard
+uv add fastapi --extra standard
 uv add --dev pytest-asyncio 
 ```
 
