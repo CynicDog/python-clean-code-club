@@ -57,7 +57,7 @@ docker compose up
 - Click Save & Test.
 
 ### Simulate requests 
-```
+```bash
 uv run scripts/simulate_requests.py
 ```
 
