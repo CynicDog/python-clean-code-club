@@ -1,0 +1,9 @@
+class PyMessage:
+    inner_text: str
+
+    def __init__(self, text: str) -> None: ...
+
+    @staticmethod
+    def greet(name: str) -> str: ...
+
+    def fail_if_empty(self, text: str) -> str: ...
