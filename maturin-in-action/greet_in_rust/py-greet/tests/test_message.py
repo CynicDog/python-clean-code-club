@@ -1,4 +1,3 @@
-import pytest
 from greet.api import Message
 
 

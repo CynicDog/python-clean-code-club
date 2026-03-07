@@ -56,7 +56,7 @@ source .venv/bin/activate
 pytest py-greet/tests
 ```
 
-## 🛠 Maintenance
+## Maintenance
 
 ### Cleaning Artifacts
 
