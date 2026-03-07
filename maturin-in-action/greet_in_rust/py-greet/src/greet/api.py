@@ -31,3 +31,6 @@ class Message:
     @staticmethod
     def greet(name: str) -> str:
         return PyMessage.greet(name)
+
+    def fail_if_empty(self, text: str) -> str:
+        return self._msg.fail_if_empty(text)
