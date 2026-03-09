@@ -49,3 +49,16 @@ docker run -d --name fastapi-postgres \
   -p 5432:5432 \
   postgres:16
 ```
+
+## ps. Docker image is essentially packaged filesystem as a file on disk 
+
+```bash 
+docker save -o fastapi-image.tar ghcr.io/cynicdog/python-clean-code-club/fastapi-for-data-science:api-server
+ls -lh fastapi-image.tar
+tar -tf fastapi-image.tar 
+
+mkdir fastapi-image
+tar -xf fastapi-image.tar -C fastapi-image
+cd fastapi-image
+tree 
+```
