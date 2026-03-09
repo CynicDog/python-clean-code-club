@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: fastapi-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fastapi_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api-server:
+    image: ghcr.io/cynicdog/python-clean-code-club/fastapi-for-data-science:api-server
+    container_name: fastapi-api
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/fastapi_db
+    depends_on:
+      - postgres
+    ports:
+      - "8000:80"
+
+volumes:
+  postgres_data:

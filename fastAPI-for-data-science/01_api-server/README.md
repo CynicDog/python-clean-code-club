@@ -33,6 +33,12 @@ uv run pytest
 uv run ruff check .
 ```
 
+### Run as Container
+
+```bash
+docker run -d -p 8000:80 --name ghcr.io/cynicdog/python-clean-code-club/fastapi-for-data-science:api-server  
+```
+
 ### Run Postgres Database (Docker)
 
 ```bash

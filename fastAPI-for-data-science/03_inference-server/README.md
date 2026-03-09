@@ -45,7 +45,7 @@ docker pull ghcr.io/cynicdog/python-clean-code-club/iris-inference:latest
 
 ```
 
-### Run Container
+### Run as Container
 
 ```bash
 docker run -d -p 8000:80 --name iris-app ghcr.io/cynicdog/python-clean-code-club/iris-inference:latest
