@@ -4,6 +4,20 @@ from fastapi import status
 
 
 @pytest.mark.asyncio
+async def test_temperature_comparison(client: AsyncClient):
+    """Testing temperature comparison"""
+
+    payload = {"t1": {"value": 25, "scale": "C"}, "t2": {"value": 77, "scale": "F"}}
+    response = await client.post("/temperature/compare", json=payload)
+    assert response.status_code == status.HTTP_200_OK
+
+    data = response.json()
+    assert data["equality"]
+    assert data["t1_kelvin"] == 298.15
+    assert data["t2_kelvin"] == 298.15
+
+
+@pytest.mark.asyncio
 async def test_create_post(client: AsyncClient):
     """Test creating a new post successfully."""
 
