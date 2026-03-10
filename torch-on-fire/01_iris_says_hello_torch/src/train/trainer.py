@@ -2,7 +2,6 @@ import torch
 from torch.utils.data import DataLoader
 from src.data.dataset import IrisDataset
 from src.models.mlp import IrisMLP
-from src.evaluation.metrics import accuracy
 
 
 def train(cfg):
@@ -16,11 +15,9 @@ def train(cfg):
     criterion = torch.nn.CrossEntropyLoss()
 
     for epoch in range(cfg.epochs):
-
         total_loss = 0
 
         for X, y in loader:
-
             optimizer.zero_grad()
 
             logits = model(X)

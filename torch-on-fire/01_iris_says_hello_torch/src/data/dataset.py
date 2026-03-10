@@ -5,7 +5,6 @@ import numpy as np
 
 
 class IrisDataset(Dataset):
-
     def __init__(self, size=100000):
         iris = load_iris()
         X = iris.data

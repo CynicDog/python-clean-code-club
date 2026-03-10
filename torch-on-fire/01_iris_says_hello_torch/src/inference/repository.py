@@ -5,7 +5,6 @@ from src.models.mlp import IrisMLP
 
 
 class ModelRepository:
-
     def __init__(self, artifact_dir: str = "artifacts"):
         self.artifact_dir = Path(artifact_dir)
 
@@ -14,9 +13,7 @@ class ModelRepository:
         model_path = self.artifact_dir / "model.pt"
 
         model = IrisMLP()
-        model.load_state_dict(
-            torch.load(model_path, map_location="cpu")
-        )
+        model.load_state_dict(torch.load(model_path, map_location="cpu"))
         model.eval()
 
         return model
