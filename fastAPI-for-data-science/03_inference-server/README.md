@@ -52,6 +52,13 @@ docker run -d -p 8000:80 --name iris-app ghcr.io/cynicdog/python-clean-code-club
 
 ```
 
+### Run as Container in k8s 
+```
+kubectl apply -f ./k8s/iris-deployment.yaml
+kubectl port-forward service/iris-service 8000:8000 
+```
+
+
 ### Make Request
 
 ```bash
