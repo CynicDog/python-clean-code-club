@@ -1,7 +1,7 @@
 import marimo
 
 __generated_with = "0.20.4"
-app = marimo.App(width="medium", layout_file="layouts/main.slides.json")
+app = marimo.App(width="medium")
 
 
 @app.cell(hide_code=True)
@@ -317,6 +317,25 @@ def _(archers):
     assert original_year_buffer.address == slice_year_buffer.address
 
     print("Proof: Slicing is zero-copy! Both objects point to the same physical RAM.")
+    return
+
+
+@app.cell
+def _():
+    import pandas as _pd
+
+    df = _pd.DataFrame({'years': [2020, 2021, 2022, 2023, 2024]})
+    df_slice = df.iloc[1:3].copy() 
+
+    original_address = df['years'].values.ctypes.data
+    slice_address = df_slice['years'].values.ctypes.data
+
+    print(f"Original Pandas Address: {original_address}")
+    print(f"Slice Pandas Address:    {slice_address}")
+
+    assert original_address != slice_address
+
+    print("Proof: Pandas is using double the RAM! These are two distinct memory blocks.")
     return
 
 
