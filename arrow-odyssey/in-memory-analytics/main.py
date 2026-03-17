@@ -339,5 +339,51 @@ def _():
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    # Chapter 2
+    """)
+    return
+
+
+@app.cell
+def _():
+    from pyarrow import fs 
+    import pyarrow.csv 
+
+    import urllib.request
+
+    return fs, urllib
+
+
+@app.cell
+def _(fs):
+    local_fs = fs.LocalFileSystem()
+    f, p = fs.FileSystem.from_uri('file:///Users/ginsenglee')
+
+    print(f)
+    print(p)
+    return
+
+
+@app.cell
+def _(pa, urllib):
+    url = "https://archive.ics.uci.edu/ml/machine-learning-databases/forest-fires/forestfires.csv"
+
+    with urllib.request.urlopen(url) as _f:
+        forestfires = pa.csv.read_csv(_f)
+
+    forestfires
+    return (forestfires,)
+
+
+@app.cell
+def _(forestfires):
+    print(forestfires.column(0).num_chunks)
+    print(forestfires.column(0).chunks)
+    return
+
+
 if __name__ == "__main__":
     app.run()

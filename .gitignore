@@ -15,3 +15,5 @@ __pycache__/
 .venv/
 env/
 
+# Sample Data 
+arrow-odyssey/in-memory-analytics/sample_data/ 
