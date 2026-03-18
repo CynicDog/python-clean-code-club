@@ -351,6 +351,9 @@ def _(mo):
 def _():
     from pyarrow import fs 
     import pyarrow.csv 
+    import pyarrow.json 
+    import pyarrow.orc 
+    import pyarrow.parquet  
 
     import urllib.request
 
@@ -364,6 +367,22 @@ def _(fs):
 
     print(f)
     print(p)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Working with Files
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### Working with CSV files in PyArrow
+    """)
     return
 
 
@@ -382,6 +401,82 @@ def _(pa, urllib):
 def _(forestfires):
     print(forestfires.column(0).num_chunks)
     print(forestfires.column(0).chunks)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### Working with JSON files in PyArrow
+    """)
+    return
+
+
+@app.cell
+def _(pa):
+    _table = pa.json.read_json("sample_data/02_sample.json")
+    _table.to_pydict()
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### Working with ORC files in PyArrow
+    """)
+    return
+
+
+@app.cell
+def _(pa):
+    ch02_orc = pa.orc.ORCFile("sample_data/02_sample.orc")
+    ch02_orc.schema
+    return (ch02_orc,)
+
+
+@app.cell
+def _(ch02_orc):
+    ch02_orc_table = ch02_orc.read(columns = ['id', 'name', 'age'])
+    ch02_orc_table
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### Working with Parquet files in PyArrow
+    """)
+    return
+
+
+@app.cell
+def _(pa):
+    ch02_parquet = pa.parquet.read_table("sample_data/02_sample.parquet")
+    ch02_parquet
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Polars and Arrow
+    """)
+    return
+
+
+@app.cell
+def _():
+    import polars as pl 
+
+    return (pl,)
+
+
+@app.cell
+def _(pl):
+    _df = pl.DataFrame({"a": [1, 2, 3]})
+
+    _arrow_table = _df.to_arrow()                   # to Arrow's Table  
+    _polars_table = pl.from_arrow(_arrow_table)     # to Polars's DataFrame
     return
 
 
